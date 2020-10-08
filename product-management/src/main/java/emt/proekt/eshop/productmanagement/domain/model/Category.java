@@ -13,17 +13,17 @@ public class Category extends AbstractEntity<CategoryId> {
     @Column(name="category_name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name="supercategory_id")
-    private Category superCategory;
+    @Embedded
+    @AttributeOverride(name="id", column = @Column(name="category_id", nullable = false))
+    private CategoryId superCategoryId;
 
     public Category(String name){
         this.name = name;
     }
 
-    public Category(String name, Category superCategory) {
+    public Category(String name, CategoryId superCategoryId) {
         this.name = name;
-        this.superCategory = superCategory;
+        this.superCategoryId = superCategoryId;
     }
 
     public Category() {}
@@ -32,8 +32,8 @@ public class Category extends AbstractEntity<CategoryId> {
         super(categoryId);
     }
 
-    public void setSuperCategory(Category category){
-        this.superCategory = category;
+    public void setSuperCategory(CategoryId categoryId){
+        this.superCategoryId = categoryId;
     }
 
     @Override

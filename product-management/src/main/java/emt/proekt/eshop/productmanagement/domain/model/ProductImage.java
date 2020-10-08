@@ -3,26 +3,30 @@ package emt.proekt.eshop.productmanagement.domain.model;
 import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
 import lombok.Getter;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Table(name="product_image")
 public class ProductImage extends AbstractEntity<ProductImageId> {
+
     private String path;
 
-    @ManyToOne
-    @JoinColumn(name="product_id")
-    private Product product;
+    @Embedded
+    @AttributeOverride(name="id",column = @Column(name="product_id", nullable = false))
+    private ProductId productId;
 
     public ProductImage() {}
 
-    public ProductImage(String path, Product product) {
+    public ProductImage(String path, ProductId productId) {
         this.path = path;
-        this.product = product;
+        this.productId = productId;
+    }
+
+    public ProductImage(ProductImageId id, String path, ProductId productId) {
+        super(id);
+        this.path = path;
+        this.productId = productId;
     }
 
     @Override

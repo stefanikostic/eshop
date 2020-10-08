@@ -25,13 +25,14 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    @ManyToOne
-    private Product product;
+    @Embedded
+    @AttributeOverride(name="id",column = @Column(name="product_id", nullable = false))
+    private ProductId productId;
 
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Attribute> attributes = new HashSet<>();
 
-    public ProductItem(ProductItemId id, String name, boolean deleted, Price price, int quantity, Product product, Set<Attribute> attributes) {
+    public ProductItem(ProductItemId id, String name, boolean deleted, Price price, int quantity, ProductId productId, Set<Attribute> attributes) {
         super(id);
         this.name = name;
         this.deleted = deleted;
@@ -40,7 +41,19 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
             throw new IllegalArgumentException("Quantity cannot be negative!");
         }
         this.quantity = quantity;
-        this.product = product;
+        this.productId = productId;
+        this.attributes = attributes;
+    }
+
+    public ProductItem(String name, boolean deleted, Price price, int quantity, ProductId productId, Set<Attribute> attributes) {
+        this.name = name;
+        this.deleted = deleted;
+        this.price = price;
+        if(quantity < 0){
+            throw new IllegalArgumentException("Quantity cannot be negative!");
+        }
+        this.quantity = quantity;
+        this.productId = productId;
         this.attributes = attributes;
     }
 

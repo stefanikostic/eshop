@@ -24,7 +24,7 @@ public class Shop extends AbstractEntity<ShopId> {
     private String shopDescription;
 
     @Column(name="shop_image")
-    private String shopImage;
+    private String shopLogoImage;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_category")
@@ -32,12 +32,22 @@ public class Shop extends AbstractEntity<ShopId> {
 
     public Shop() {}
 
-    public Shop(String name, String shopBankAccount, String shopUTN, String shopDescription, String shopImage, Category shopCategory) {
+    public Shop(String name, String shopBankAccount, String shopUTN, String shopDescription, String shopLogoImage, Category shopCategory) {
         this.name = name;
         this.shopBankAccount = shopBankAccount;
         this.shopUTN = shopUTN;
         this.shopDescription = shopDescription;
-        this.shopImage = shopImage;
+        this.shopLogoImage = shopLogoImage;
+        this.shopCategory = shopCategory;
+    }
+
+    public Shop(ShopId id, String name, String shopBankAccount, String shopUTN, String shopDescription, String shopLogoImage, Category shopCategory) {
+        super(id);
+        this.name = name;
+        this.shopBankAccount = shopBankAccount;
+        this.shopUTN = shopUTN;
+        this.shopDescription = shopDescription;
+        this.shopLogoImage = shopLogoImage;
         this.shopCategory = shopCategory;
     }
 
