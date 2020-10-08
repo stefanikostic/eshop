@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="eshop" />
+        <module name="product-management" />
+        <module name="user-management" />
+        <module name="order-management" />
+        <module name="shared-kernel" />
+        <module name="cart-management" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cart-management" options="-parameters" />
+      <module name="order-management" options="-parameters" />
+      <module name="product-management" options="-parameters" />
+      <module name="shared-kernel" options="-parameters" />
+      <module name="user-management" options="-parameters" />
+    </option>
+  </component>
+</project>
