@@ -2,22 +2,31 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="eshop" />
-        <module name="product-management" />
         <module name="user-management" />
-        <module name="order-management" />
-        <module name="shared-kernel" />
         <module name="cart-management" />
+        <module name="eureka" />
+        <module name="e-shop" />
+        <module name="shared-kernel" />
+        <module name="product-management" />
+        <module name="order-management" />
+        <module name="eureka-server" />
+        <module name="eshop" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="eureka-server" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cart-management" options="-parameters" />
+      <module name="eureka" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
       <module name="order-management" options="-parameters" />
       <module name="product-management" options="-parameters" />
       <module name="shared-kernel" options="-parameters" />

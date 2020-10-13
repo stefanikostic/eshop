@@ -1,5 +1,6 @@
 package emt.proekt.eshop.sharedkernel.infra.eventlog;
 
+import lombok.var;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -44,9 +44,9 @@ public class Address implements ValueObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Address address = (Address) o;
-        return Objects.equals(address, address.address) &&
-                Objects.equals(city, address.city) &&
-                country == address.country && postalCode.equals(address.postalCode);
+        return Objects.equals(this.address, address.address) &&
+                Objects.equals(this.city, address.city) &&
+                this.country == address.country && this.postalCode.equals(address.postalCode);
     }
 
     @Override
@@ -56,15 +56,13 @@ public class Address implements ValueObject {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(address);
-        sb.append(", ");
-        sb.append(city);
-        sb.append(", ");
-        sb.append(country);
-        sb.append(", ");
-        sb.append(postalCode);
-        return sb.toString();
+        return address +
+                ", " +
+                city +
+                ", " +
+                country +
+                ", " +
+                postalCode;
     }
 
     @org.springframework.lang.NonNull

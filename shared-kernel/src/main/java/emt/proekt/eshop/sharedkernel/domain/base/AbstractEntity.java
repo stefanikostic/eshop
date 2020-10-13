@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Getter
 @MappedSuperclass
-public abstract class AbstractEntity<ID extends DomainObjectId> implements IdentifyableDomainObject<ID> {
+public abstract class AbstractEntity<ID extends DomainObjectId> implements IdentifiableDomainObject<ID> {
 
     @EmbeddedId
     protected ID id;

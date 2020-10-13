@@ -10,7 +10,7 @@ public class ShopId extends DomainObjectId {
     private ShopId() {
         super(DomainObjectId.randomId(ShopId.class).toString());
     }
-
+    @JsonCreator
     public ShopId(String id) {
         super(id);
     }

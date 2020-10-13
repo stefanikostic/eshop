@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.List;
 
 @Service
-@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
 

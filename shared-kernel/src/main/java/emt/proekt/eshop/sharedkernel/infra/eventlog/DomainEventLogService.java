@@ -2,6 +2,7 @@ package emt.proekt.eshop.sharedkernel.infra.eventlog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import emt.proekt.eshop.sharedkernel.domain.base.DomainEvent;
+import lombok.var;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
