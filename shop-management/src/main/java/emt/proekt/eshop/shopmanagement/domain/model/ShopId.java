@@ -1,16 +1,14 @@
-package emt.proekt.eshop.productmanagement.domain.model;
+package emt.proekt.eshop.shopmanagement.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class ShopId extends DomainObjectId {
-    private ShopId() {
+    public ShopId(){
         super(DomainObjectId.randomId(ShopId.class).toString());
     }
-    @JsonCreator
     public ShopId(String id) {
         super(id);
     }

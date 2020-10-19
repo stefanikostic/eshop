@@ -24,9 +24,9 @@ public class RemoteEventLogServiceClient implements RemoteEventLogService {
     private final String source;
     private final RestTemplate restTemplate;
 
-    public RemoteEventLogServiceClient(@Value("${app.carts.url}") String source,
-                                       @Value("${app.carts.connect-timeout-ms}") int connectTimeout,
-                                       @Value("${app.carts.read-timeout-ms}") int readTimeout) {
+    public RemoteEventLogServiceClient(@Value("${app.cart-management.url}") String source,
+                                       @Value("${app.cart-management.connect-timeout-ms}") int connectTimeout,
+                                       @Value("${app.cart-management.read-timeout-ms}") int readTimeout) {
         this.source = source;
         this.restTemplate = new RestTemplate();
         var requestFactory = new SimpleClientHttpRequestFactory();
@@ -48,7 +48,7 @@ public class RemoteEventLogServiceClient implements RemoteEventLogService {
                     new ParameterizedTypeReference<List<StoredDomainEvent>>() {
                     }).getBody();
         } catch (Exception ex){
-            LOGGER.error("Error retrieving events",ex);
+            LOGGER.error("Error retrieving events", ex);
             return new RemoteEventLogImpl(Collections.emptyList());
         }
         return new RemoteEventLogImpl(events);
