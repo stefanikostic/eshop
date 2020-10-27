@@ -33,12 +33,14 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+<!--
 
-        <!--EUREKA CLIENT-->
+        &lt;!&ndash;EUREKA CLIENT&ndash;&gt;
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+-->
 
         <!--ZUUL-->
         <dependency>

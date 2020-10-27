@@ -1,8 +1,10 @@
 package emt.proekt.eshop.productmanagement.domain.model;
 
 import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
+import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 import emt.proekt.eshop.sharedkernel.domain.financial.Price;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,11 +12,9 @@ import java.util.Set;
 
 @Entity
 @Getter
-@Table(name = "product_item")
+@NoArgsConstructor
+@Table(name = "product_items")
 public class ProductItem extends AbstractEntity<ProductItemId> {
-
-    @Column(name="item_name")
-    private String name;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
@@ -23,7 +23,7 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     private Price price;
 
     @Column(name = "quantity", nullable = false)
-    private int quantity;
+    private int quantityInStock;
 
     @Embedded
     @AttributeOverride(name="id",column = @Column(name="product_id", nullable = false))
@@ -32,42 +32,27 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Attribute> attributes = new HashSet<>();
 
-    public ProductItem(ProductItemId id, String name, boolean deleted, Price price, int quantity, ProductId productId, Set<Attribute> attributes) {
-        super(id);
-        this.name = name;
+    public ProductItem(boolean deleted, Price price, int quantityInStock, ProductId productId, Set<Attribute> attributes) {
+        super(DomainObjectId.randomId(ProductItemId.class));
         this.deleted = deleted;
         this.price = price;
-        if(quantity < 0){
+        if(quantityInStock < 0){
             throw new IllegalArgumentException("Quantity cannot be negative!");
         }
-        this.quantity = quantity;
+        this.quantityInStock = quantityInStock;
         this.productId = productId;
         this.attributes = attributes;
     }
-
-    public ProductItem(String name, boolean deleted, Price price, int quantity, ProductId productId, Set<Attribute> attributes) {
-        this.name = name;
-        this.deleted = deleted;
-        this.price = price;
-        if(quantity < 0){
-            throw new IllegalArgumentException("Quantity cannot be negative!");
-        }
-        this.quantity = quantity;
-        this.productId = productId;
-        this.attributes = attributes;
-    }
-
-    public ProductItem() {}
 
     public void subtractQuantity(int quantity){
-        if(quantity > this.quantity){
+        if(quantity > this.quantityInStock){
             throw new RuntimeException("unsupported quantity");
         }
-        this.quantity -= quantity;
+        this.quantityInStock -= quantity;
     }
 
     public void addQuantity(int quantity){
-        this.quantity += quantity;
+        this.quantityInStock += quantity;
     }
 
     @Override
@@ -76,6 +61,6 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     }
 
     public Price subTotal(){
-        return price.multiply(quantity);
+        return price.multiply(quantityInStock);
     }
 }
