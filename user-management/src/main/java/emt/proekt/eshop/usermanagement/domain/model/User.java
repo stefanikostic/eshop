@@ -47,6 +47,18 @@ public class User extends AbstractEntity<UserId> {
         roles.add(role);
     }
 
+    public void setShopId(ShopId shopId) {
+        this.shopId = shopId;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void deleteRole(Role role){
+        this.roles.remove(role);
+    }
+
     @Override
     public UserId id() {
         return id;
