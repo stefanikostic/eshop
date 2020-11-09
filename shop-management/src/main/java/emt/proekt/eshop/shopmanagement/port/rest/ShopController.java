@@ -1,18 +1,14 @@
 package emt.proekt.eshop.shopmanagement.port.rest;
 
+import emt.proekt.eshop.sharedkernel.domain.base.Page;
 import emt.proekt.eshop.shopmanagement.application.ShopService;
-import emt.proekt.eshop.shopmanagement.domain.model.Shop;
 import emt.proekt.eshop.shopmanagement.domain.model.ShopId;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopCreationDTO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO;
+import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDetailsDTO;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
-
 @RestController
-@RequestMapping("/api/shops")
 public class ShopController {
     private final ShopService shopService;
 
@@ -20,22 +16,21 @@ public class ShopController {
         this.shopService = shopService;
     }
 
-    @PostMapping(path = "/create")
-    @PreAuthorize("hasRole('ROLE_USER') && !hasAnyRole('ROLE_SHOPMANAGER', 'ROLE_SALES')")
-    public ShopId createShop(@RequestHeader String userId,
-                           @RequestBody ShopCreationDTO shop) {
-        return shopService.createShop(userId, shop);
+    @PostMapping(path = "/management/create")
+    public ShopId createShop(@RequestBody ShopCreationDTO shop) {
+
+        return shopService.createShop(shop);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Shop> findById(@PathVariable("id") String shopId) {
-        return shopService.findById(new ShopId(shopId))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping(path = "/public/{shopId}")
+    public ShopDetailsDTO getShop(@PathVariable String shopId) {
+        return shopService.getShopDetails(shopId);
     }
 
-    @GetMapping
-    public List<Shop> findAll() {
-        return shopService.findAll();
+    @GetMapping(path = "/public/allShops")
+    public Page<ShopDTO<ShopId>> getAllShops(@RequestParam(name = "q", defaultValue = "", required = false) String query,
+                                     @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                     @RequestParam(name = "page-size", defaultValue = "20", required = false) int size) {
+        return shopService.getAllShops(query, page, size);
     }
 }

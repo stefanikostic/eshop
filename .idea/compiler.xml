@@ -7,19 +7,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="eureka-server" />
-        <module name="shop-management" />
-        <module name="eshop" />
-        <module name="e-shop" />
-        <module name="eureka" />
-        <module name="product-management" />
         <module name="user-management" />
-        <module name="order-management" />
-        <module name="shared-kernel" />
         <module name="cart-management" />
+        <module name="shop-management" />
+        <module name="e-shop" />
+        <module name="shared-kernel" />
+        <module name="product-management" />
+        <module name="order-management" />
+        <module name="eureka-server" />
+        <module name="eshop" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="eureka" target="1.8" />
       <module name="eureka-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>

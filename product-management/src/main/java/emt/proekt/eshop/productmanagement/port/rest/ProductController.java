@@ -1,25 +1,28 @@
 package emt.proekt.eshop.productmanagement.port.rest;
 
-import emt.proekt.eshop.productmanagement.application.ProductService;
+import emt.proekt.eshop.productmanagement.application.ProductApplicationService;
 import emt.proekt.eshop.productmanagement.domain.model.Product;
 import emt.proekt.eshop.productmanagement.domain.model.ProductId;
+import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductCreationDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class ProductController {
-    private final ProductService productService;
+    private final ProductApplicationService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductApplicationService productService) {
         this.productService = productService;
     }
 
-    @GetMapping("/{id}")
+    @PostMapping(path = "/management/create")
+    public String createProduct(@RequestBody ProductCreationDTO productCreationDTO) {
+        return productService.createProduct(productCreationDTO);
+    }
+
+/*    @GetMapping("/{id}")
     public ResponseEntity<Product> findById(@PathVariable("id") String productId) {
         return productService.findById(new ProductId(productId))
                 .map(ResponseEntity::ok)
@@ -29,5 +32,5 @@ public class ProductController {
     @GetMapping
     public List<Product> findAll() {
         return productService.findAll();
-    }
+    }*/
 }

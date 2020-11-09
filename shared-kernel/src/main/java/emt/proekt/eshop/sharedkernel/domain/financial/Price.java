@@ -2,6 +2,7 @@ package emt.proekt.eshop.sharedkernel.domain.financial;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -21,13 +22,12 @@ public class Price {
         this.price = 0;
     }
 
-    public Price(@NonNull int price, @NonNull Currency currency) {
+    public Price(@NonNull int price, Currency currency) {
+        if(currency == null){
+            currency = Currency.EUROS;
+        }
         this.price = price;
         this.currency = currency;
-    }
-
-    public static Price valueOf(Currency currency, int amount) {
-        return new Price(amount, currency);
     }
 
     public Price add(Price amount) {

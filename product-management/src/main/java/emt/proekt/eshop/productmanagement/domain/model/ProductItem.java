@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,22 +26,21 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     @Column(name = "quantity", nullable = false)
     private int quantityInStock;
 
-    @Embedded
-    @AttributeOverride(name="id",column = @Column(name="product_id", nullable = false))
-    private ProductId productId;
+    @Column(name = "productId")
+    private String product;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Attribute> attributes = new HashSet<>();
 
-    public ProductItem(boolean deleted, Price price, int quantityInStock, ProductId productId, Set<Attribute> attributes) {
+    public ProductItem(boolean deleted, Price price, int quantityInStock, Set<Attribute> attributes, ProductId productId) {
         super(DomainObjectId.randomId(ProductItemId.class));
         this.deleted = deleted;
         this.price = price;
+        this.product = productId.getId();
         if(quantityInStock < 0){
             throw new IllegalArgumentException("Quantity cannot be negative!");
         }
         this.quantityInStock = quantityInStock;
-        this.productId = productId;
         this.attributes = attributes;
     }
 
@@ -56,6 +56,7 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     }
 
     @Override
+    @Column(name = "productItemId")
     public ProductItemId id() {
         return id;
     }

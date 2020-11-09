@@ -17,17 +17,12 @@ public class Category extends AbstractEntity<CategoryId> {
     private String name;
 
     @Embedded
-    @AttributeOverride(name="id", column = @Column(name="category_id", nullable = false))
+    @AttributeOverride(name="id", column = @Column(name="super_category_id"))
     private CategoryId superCategoryId;
 
     public Category(String name, CategoryId superCategoryId) {
         super(DomainObjectId.randomId(CategoryId.class));
         this.name = name;
         this.superCategoryId = superCategoryId;
-    }
-
-    @Override
-    public CategoryId id() {
-        return id;
     }
 }

@@ -49,8 +49,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig),JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/api/products/**").hasRole("SHOPMANAGER")
-                .antMatchers("/login","/api/users/createUser","/api/shops/**","/api/categories/**","/api/attributes/**").permitAll()
+                .antMatchers("/shops/management/create").access("hasRole('USER') and !hasAnyRole('SHOPMANAGER','SALES')")
+                .antMatchers("/products/management/create").hasAnyRole("SHOPMANAGER","SALES")
+                .antMatchers("/login","/users/createUser","/shops/public/**","/categories/**","/attributes/**").permitAll()
                 .anyRequest()
                 .authenticated();
     }

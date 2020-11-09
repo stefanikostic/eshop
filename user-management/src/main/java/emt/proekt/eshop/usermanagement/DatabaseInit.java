@@ -41,6 +41,7 @@ public class DatabaseInit implements CommandLineRunner {
             this.rolesRepository.save(managerRole);
 
             User user23 = new User("Aneta", "Ancevska", "aneta.ancevska@gmail.com", passwordEncoder.encode("aneta123"), userRole);
+            user23.addRole(managerRole);
             usersRepository.save(user23);
             User user29 = new User( "Leon", "Krstevski","leon.krstevski@gmail.com", passwordEncoder.encode("leon4455"), userRole);
             usersRepository.save(user29);

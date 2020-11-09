@@ -1,29 +1,38 @@
 package emt.proekt.eshop.productmanagement.domain.model;
 
+import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductItemCreationDTO;
 import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
 import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
+import emt.proekt.eshop.sharedkernel.domain.financial.Currency;
 import emt.proekt.eshop.sharedkernel.domain.financial.Price;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.var;
+import org.w3c.dom.Attr;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name="products")
+@Table(name = "products")
 public class Product extends AbstractEntity<ProductId> {
-    @Column(name="product_name", nullable = false)
+    @Column(name = "product_name", nullable = false)
     private String name;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name="product_description")
+    @Column(name = "product_description")
     private String productDescription;
 
     @Embedded
-    @AttributeOverride(name="id",column = @Column(name="shop_id", nullable = false))
+    @AttributeOverride(name = "id", column = @Column(name = "shop_id", nullable = false))
     private ShopId shopId;
 
     @Embedded
@@ -33,21 +42,47 @@ public class Product extends AbstractEntity<ProductId> {
     })
     private Price price;
 
-    public Product(String name, boolean deleted, String productDescription, ShopId shopId, Price price){
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="productId", referencedColumnName="id")
+    private Set<ProductItem> productItems = new HashSet<>();
+
+    @ManyToOne
+    private Category category;
+
+    public Product(String name, boolean deleted, String productDescription, ShopId shopId, Category category) {
         super(DomainObjectId.randomId(ProductId.class));
         this.name = name;
         this.deleted = deleted;
         this.productDescription = productDescription;
         this.shopId = shopId;
-        this.price = price;
+        this.category = category;
     }
 
-    public void setDeleted(boolean deleted){
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    @Override
-    public ProductId id() {
-        return id;
+    public void setProductDescription(String description) {
+        this.productDescription = description;
+    }
+
+    public void setProductName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(int price, Currency currency) {
+        this.price = new Price(price, currency);
+    }
+
+    public void setProductCategory(Category category) {
+        this.category = category;
+    }
+
+
+    public ProductItem addProductItem(@NonNull ProductItemCreationDTO productItemDTO, Set<Attribute> productItemAttributes) {
+        Objects.requireNonNull(productItemDTO, "product must not be null");
+        var item = new ProductItem(false, new Price(productItemDTO.getPrice(), Currency.EUROS), productItemDTO.getQuantity(), productItemAttributes, id);
+        productItems.add(item);
+        return item;
     }
 }

@@ -1,72 +1,61 @@
 package emt.proekt.eshop.shopmanagement.application;
 
-import emt.proekt.eshop.shopmanagement.domain.event.ShopCreated;
-import emt.proekt.eshop.shopmanagement.domain.model.*;
+import emt.proekt.eshop.shopmanagement.domain.model.Shop;
+import emt.proekt.eshop.shopmanagement.domain.model.ShopId;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopCreationDTO;
-import emt.proekt.eshop.shopmanagement.domain.model.exceptions.CategoryNotFoundException;
-import emt.proekt.eshop.shopmanagement.domain.repository.CategoryRepository;
-import emt.proekt.eshop.shopmanagement.domain.repository.ShopRepository;
+import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO;
+import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDetailsDTO;
+import emt.proekt.eshop.shopmanagement.domain.model.exceptions.ShopNotFoundException;
+import emt.proekt.eshop.shopmanagement.domain.repository.ShopRepositoryImpl;
 import lombok.NonNull;
-import org.springframework.context.ApplicationEventPublisher;
+import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
 public class ShopService {
-    private final ShopRepository shopRepository;
+    private final ShopRepositoryImpl shopRepository;
 
-    private final CategoryRepository categoryRepository;
-
-    private final ApplicationEventPublisher applicationEventPublisher;
-
-    private final Validator validator;
-
-    public ShopService(ShopRepository shopRepository, CategoryRepository categoryRepository, ApplicationEventPublisher applicationEventPublisher, Validator validator) {
+    public ShopService(ShopRepositoryImpl shopRepository) {
         this.shopRepository = shopRepository;
-        this.categoryRepository = categoryRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.validator = validator;
-    }
-
-    @NonNull
-    public List<Shop> findAll() {
-        return shopRepository.findAll();
-    }
-
-    @NonNull
-    public Optional<Shop> findById(@NonNull ShopId shopId) {
-        Objects.requireNonNull(shopId, "shopId must not be null");
-        return shopRepository.findById(shopId);
-    }
-
-    public void deleteShop(@NonNull ShopId shopId){
-        Objects.requireNonNull(shopId, "shopId must not be null");
-        shopRepository.deleteById(shopId);
-    }
-
-    @NonNull
-    public Shop saveShop(@NonNull Shop shop){
-        Objects.requireNonNull(shop, "shop must not be null");
-        return shopRepository.save(shop);
     }
 
     @Transactional
-    public ShopId createShop(@NonNull String userId, @NonNull ShopCreationDTO shop){
-        Objects.requireNonNull(shop,"shop must not be null");
-        var newShop = shopRepository.saveAndFlush(toDomainModel(shop));
-        applicationEventPublisher.publishEvent(new ShopCreated(newShop.id(), new UserId(userId), Instant.now()));
+    public ShopId createShop(ShopCreationDTO shop) {
+
+
+        var newShop = shopRepository.save(toDomainModel(shop));
         return newShop.id();
     }
 
+    public ShopDetailsDTO getShopDetails(String shopId) {
+        ShopDTO<ShopId> shop = shopRepository.getShopForDetails(shopId).orElseThrow(ShopNotFoundException::new);
+
+        //URL imageUrl = imagesService.downloadShopImage(shop.getShopLogoImage());
+
+        return new ShopDetailsDTO(shop.getShopId(), shop.getShopName(), shop.getShopDescription(), shop.getCreatedDate(), shop.getShopCategory());
+    }
+
+    public emt.proekt.eshop.sharedkernel.domain.base.Page<ShopDTO<ShopId>> getAllShops(String query, int page, int size) {
+
+        org.springframework.data.domain.Page<ShopDTO<ShopId>> result = shopRepository.findAllShops(query, page, size);
+
+//        result.getContent().forEach(shopDTO -> {
+//            URL imageUrl = imagesService.downloadShopImage(shopDTO.getShopLogoImage());
+//            shopDTO.setShopLogo(imageUrl);
+//        });
+        return new emt.proekt.eshop.sharedkernel.domain.base.Page<ShopDTO<ShopId>>(page,
+                result.getTotalPages(),
+                size,
+                result.getTotalElements(),
+                result.getContent()) {
+        };
+    }
+
     private Shop toDomainModel(@NonNull ShopCreationDTO shop) {
-        Category category = this.categoryRepository.findById(new CategoryId(shop.getShopCategory())).orElseThrow(CategoryNotFoundException::new);
-        return new Shop(shop.getShopName(), shop.getShopBankAccount(), shop.getShopUTN(), shop.getShopDescription(), null, category);
+        return new Shop(shop.getShopName(), shop.getShopBankAccount(), shop.getShopUTN(), shop.getShopDescription(), null, LocalDateTime.now());
     }
 }

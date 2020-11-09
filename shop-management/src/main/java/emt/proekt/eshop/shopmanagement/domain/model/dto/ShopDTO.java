@@ -1,6 +1,7 @@
 package emt.proekt.eshop.shopmanagement.domain.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import emt.proekt.eshop.shopmanagement.domain.model.ShopId;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
 
@@ -9,13 +10,16 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class ShopDTO {
+public class ShopDTO<ID> {
 
-    private UUID shopId;
+    @JsonIgnore
+    private ID id;
+    @Transient
+    private String shopId;
     private String shopName;
     private String shopDescription;
     private Long shopCategory;
-    private LocalDateTime createdDate;
+    private String createdDate;
 
     @JsonIgnore
     private String shopLogoImage;
@@ -23,14 +27,12 @@ public class ShopDTO {
     @Transient
     private URL shopLogo;
 
-    public ShopDTO(UUID shopId,
+    public ShopDTO(ID id,
                    String shopName,
                    String shopDescription,
                    String shopLogoImage,
-                   Long shopCategory,
-                   LocalDateTime createdDate) {
-        this.shopCategory = shopCategory;
-        this.shopId = shopId;
+                   String createdDate) {
+        this.id = id;
         this.shopDescription = shopDescription;
         this.createdDate = createdDate;
         this.shopName = shopName;

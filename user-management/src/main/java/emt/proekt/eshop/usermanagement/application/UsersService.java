@@ -1,12 +1,11 @@
 package emt.proekt.eshop.usermanagement.application;
 
-import emt.proekt.eshop.sharedkernel.domain.exceptions.UserNotFoundException;
 import emt.proekt.eshop.usermanagement.application.security.UserDetailsImpl;
 import emt.proekt.eshop.usermanagement.domain.dtos.UserEmailsProjection;
 import emt.proekt.eshop.usermanagement.domain.exceptions.UserEmailAlreadyExistsException;
+import emt.proekt.eshop.usermanagement.domain.exceptions.UserNotFoundException;
 import emt.proekt.eshop.usermanagement.domain.exceptions.UserTableNotSavedException;
 import emt.proekt.eshop.usermanagement.domain.model.Role;
-import emt.proekt.eshop.usermanagement.domain.model.Shop;
 import emt.proekt.eshop.usermanagement.domain.model.User;
 import emt.proekt.eshop.usermanagement.domain.repository.RolesRepository;
 import emt.proekt.eshop.usermanagement.domain.repository.UsersRepository;
