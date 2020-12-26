@@ -1,13 +1,16 @@
 package emt.proekt.eshop.productmanagement.domain.modelDTOS;
 
+import emt.proekt.eshop.sharedkernel.domain.financial.Currency;
+
 import java.util.UUID;
 
 public interface ProductsForMainPageProjection {
 
-     UUID getProductId();
+     String getProductId();
      String getProductName();
      String getProductDescription();
      Double getPrice();
-     String getImagePath();
-     UUID getShopId();
+     Currency getCurrency();
+     //String getImagePath();
+     String getShopId();
 }

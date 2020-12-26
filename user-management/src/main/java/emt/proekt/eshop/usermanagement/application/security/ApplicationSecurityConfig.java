@@ -51,7 +51,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/shops/management/create").access("hasRole('USER') and !hasAnyRole('SHOPMANAGER','SALES')")
                 .antMatchers("/products/management/create").hasAnyRole("SHOPMANAGER","SALES")
-                .antMatchers("/login","/users/createUser","/shops/public/**","/categories/**","/attributes/**").permitAll()
+                .antMatchers("/login","/users/createUser","/shops/public/**","/products/**", "/products/categories/**","/products/attributes/**").permitAll()
                 .anyRequest()
                 .authenticated();
     }

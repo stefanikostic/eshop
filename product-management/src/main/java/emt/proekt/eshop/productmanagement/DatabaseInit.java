@@ -229,5 +229,6 @@ public class DatabaseInit implements CommandLineRunner {
             this.categoriesRepository.save(categoryLightning);
 
         }
+        System.out.println("----DATABASE INITIALIZED----");
     }
 }

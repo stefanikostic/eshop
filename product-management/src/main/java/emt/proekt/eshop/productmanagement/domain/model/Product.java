@@ -12,6 +12,8 @@ import lombok.var;
 import org.w3c.dom.Attr;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +51,9 @@ public class Product extends AbstractEntity<ProductId> {
     @ManyToOne
     private Category category;
 
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
     public Product(String name, boolean deleted, String productDescription, ShopId shopId, Category category) {
         super(DomainObjectId.randomId(ProductId.class));
         this.name = name;
@@ -56,6 +61,7 @@ public class Product extends AbstractEntity<ProductId> {
         this.productDescription = productDescription;
         this.shopId = shopId;
         this.category = category;
+        this.createdDate = LocalDateTime.now();
     }
 
     public void setDeleted(boolean deleted) {

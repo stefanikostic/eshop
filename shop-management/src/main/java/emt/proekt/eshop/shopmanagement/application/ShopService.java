@@ -4,7 +4,6 @@ import emt.proekt.eshop.shopmanagement.domain.model.Shop;
 import emt.proekt.eshop.shopmanagement.domain.model.ShopId;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopCreationDTO;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO;
-import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDetailsDTO;
 import emt.proekt.eshop.shopmanagement.domain.model.exceptions.ShopNotFoundException;
 import emt.proekt.eshop.shopmanagement.domain.repository.ShopRepositoryImpl;
 import lombok.NonNull;
@@ -31,12 +30,12 @@ public class ShopService {
         return newShop.id();
     }
 
-    public ShopDetailsDTO getShopDetails(String shopId) {
+    public ShopDTO<ShopId> getShopDetails(String shopId) {
         ShopDTO<ShopId> shop = shopRepository.getShopForDetails(shopId).orElseThrow(ShopNotFoundException::new);
 
         //URL imageUrl = imagesService.downloadShopImage(shop.getShopLogoImage());
 
-        return new ShopDetailsDTO(shop.getShopId(), shop.getShopName(), shop.getShopDescription(), shop.getCreatedDate(), shop.getShopCategory());
+        return shop;
     }
 
     public emt.proekt.eshop.sharedkernel.domain.base.Page<ShopDTO<ShopId>> getAllShops(String query, int page, int size) {

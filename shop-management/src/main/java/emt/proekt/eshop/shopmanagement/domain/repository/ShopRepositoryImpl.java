@@ -18,7 +18,7 @@ public class ShopRepositoryImpl {
     }
 
     public Optional<ShopDTO<ShopId>> getShopForDetails(String shopId){
-        return shopRepository.findByShopId(shopId);
+        return shopRepository.findShopById(new ShopId(shopId));
     }
 
     public Shop save(Shop shop){

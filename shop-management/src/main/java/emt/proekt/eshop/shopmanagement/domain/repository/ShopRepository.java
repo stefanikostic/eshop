@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ShopRepository extends JpaRepository<Shop, ShopId> {
     @Query("select new emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO(s.id,s.name,s.shopDescription,s.shopLogoImage,s.createdDate) from Shop s where s.id=:shopId")
-    Optional<ShopDTO<ShopId>> findByShopId(String shopId);
+    Optional<ShopDTO<ShopId>> findShopById(ShopId shopId);
 
     @Query("select new emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO(s.id,s.name,s.shopDescription,s.shopLogoImage,s.createdDate) from Shop s")
     org.springframework.data.domain.Page<ShopDTO<ShopId>> findAllBy(Pageable pageable);

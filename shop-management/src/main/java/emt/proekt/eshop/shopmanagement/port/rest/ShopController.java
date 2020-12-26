@@ -5,7 +5,6 @@ import emt.proekt.eshop.shopmanagement.application.ShopService;
 import emt.proekt.eshop.shopmanagement.domain.model.ShopId;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopCreationDTO;
 import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDTO;
-import emt.proekt.eshop.shopmanagement.domain.model.dto.ShopDetailsDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +22,7 @@ public class ShopController {
     }
 
     @GetMapping(path = "/public/{shopId}")
-    public ShopDetailsDTO getShop(@PathVariable String shopId) {
+    public ShopDTO<ShopId> getShop(@PathVariable String shopId) {
         return shopService.getShopDetails(shopId);
     }
 
