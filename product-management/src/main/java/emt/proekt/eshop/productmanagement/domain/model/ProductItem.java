@@ -26,7 +26,7 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
     @Column(name = "quantity", nullable = false)
     private int quantityInStock;
 
-    @Column(name = "productId")
+    @Column(name = "productId", nullable = false)
     private String product;
 
     @ManyToMany

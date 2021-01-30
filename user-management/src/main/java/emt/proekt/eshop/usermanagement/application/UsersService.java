@@ -1,23 +1,24 @@
 package emt.proekt.eshop.usermanagement.application;
 
+import emt.proekt.eshop.sharedkernel.events.ShopCreatedEvent;
 import emt.proekt.eshop.usermanagement.application.security.UserDetailsImpl;
 import emt.proekt.eshop.usermanagement.domain.dtos.UserEmailsProjection;
 import emt.proekt.eshop.usermanagement.domain.exceptions.UserEmailAlreadyExistsException;
 import emt.proekt.eshop.usermanagement.domain.exceptions.UserNotFoundException;
 import emt.proekt.eshop.usermanagement.domain.exceptions.UserTableNotSavedException;
 import emt.proekt.eshop.usermanagement.domain.model.Role;
+import emt.proekt.eshop.usermanagement.domain.model.ShopId;
 import emt.proekt.eshop.usermanagement.domain.model.User;
+import emt.proekt.eshop.usermanagement.domain.model.UserId;
 import emt.proekt.eshop.usermanagement.domain.repository.RolesRepository;
 import emt.proekt.eshop.usermanagement.domain.repository.UsersRepository;
-import emt.proekt.eshop.usermanagement.integration.ShopCreatedEvent;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -71,11 +72,20 @@ public class UsersService implements UserDetailsService {
         return new UserDetailsImpl(user);
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void onShopCreated(ShopCreatedEvent event) {
-        User u = usersRepository.findById(event.getUserId()).orElseThrow(UserNotFoundException::new);
-        u.setShopId(event.getShopId());
-        u.addRole(this.rolesRepository.findByRoleName("SHOPMANAGER"));
-        usersRepository.save(u);
+
+    @KafkaListener(topics = "createdShopsTopic", groupId = "group_id",
+            containerFactory = "shopCreatedListenerFactory")
+    @Transactional
+    public void onShopCreated(ShopCreatedEvent shopCreatedEvent) {
+        System.out.println("Consumed JSON Message: " + shopCreatedEvent);
+
+        try {
+            User u = usersRepository.findById(new UserId(shopCreatedEvent.getUserId())).orElseThrow(UserNotFoundException::new);
+            u.setShopId(new ShopId(shopCreatedEvent.getShopId()));
+            u.addRole(this.rolesRepository.findByRoleName("SHOPMANAGER"));
+            usersRepository.save(u);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 }

@@ -6,6 +6,7 @@ import emt.proekt.eshop.usermanagement.domain.repository.RolesRepository;
 import emt.proekt.eshop.usermanagement.domain.repository.UsersRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

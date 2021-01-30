@@ -16,17 +16,18 @@ public class ProductDTO<ID extends DomainObjectId> {
     private String productDescription;
     private int price;
     private Currency currency;
-    //private String imagePath;
+    private String imagePath;
 
     public ProductDTO(ID productId,
                       String productName,
                       String productDescription,
                       int price,
-                      Currency currency
-                      ) { //String imagePath
+                      Currency currency,
+                      String imagePath
+                      ) {
 
         this.productName = productName;
-     //   this.imagePath = imagePath;
+        this.imagePath = imagePath;
         this.productId = productId.getId();
         this.productDescription = productDescription;
         this.price = price;
