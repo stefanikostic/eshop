@@ -12,4 +12,5 @@ public class ShopCreationDTO implements Serializable {
     private String shopDescription;
     private String shopBankAccount;
     private String shopUTN;
+    private String ownerId;
 }

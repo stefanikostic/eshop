@@ -13,7 +13,7 @@ public class ProductForMainPageDTO {
     private String productName;
     private String productDescription;
     private Double price;
-   // private URL imageURL;
+    private URL imageURL;
     private String shopId;
     private Currency currency;
 
@@ -22,13 +22,13 @@ public class ProductForMainPageDTO {
                                  String productDescription,
                                  Double price,
                                  Currency currency,
-                              //   URL imageURL,
+                                 URL imageURL,
                                  String shopId) {
         this.productName = productName;
         this.productId = productId;
         this.productDescription = productDescription;
         this.price = price;
-        //this.imageURL = imageURL;
+        this.imageURL = imageURL;
         this.shopId = shopId;
         this.currency = currency;
     }

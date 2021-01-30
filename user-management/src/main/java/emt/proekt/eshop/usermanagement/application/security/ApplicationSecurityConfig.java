@@ -47,11 +47,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig),JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/shops/management/create").access("hasRole('USER') and !hasAnyRole('SHOPMANAGER','SALES')")
-                .antMatchers("/products/management/create").hasAnyRole("SHOPMANAGER","SALES")
-                .antMatchers("/login","/users/createUser","/shops/public/**","/products/**", "/products/categories/**","/products/attributes/**").permitAll()
+                .antMatchers("/shops/management/{shopId}/uploadImage").hasRole("SHOPMANAGER")
+
+                .antMatchers("products/{productId}/uploadImages").hasAnyRole("SHOPMANAGER", "SALES")
+
+                .antMatchers("/products/management/create").hasAnyRole("SHOPMANAGER", "SALES")
+                .antMatchers("/login", "/api/users/createUser", "/shops/public/**", "/products/**", "/products/categories/**", "/products/attributes/**").permitAll()
                 .anyRequest()
                 .authenticated();
     }

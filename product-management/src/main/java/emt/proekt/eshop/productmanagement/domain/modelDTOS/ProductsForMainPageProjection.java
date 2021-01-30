@@ -11,6 +11,6 @@ public interface ProductsForMainPageProjection {
      String getProductDescription();
      Double getPrice();
      Currency getCurrency();
-     //String getImagePath();
+     String getImagePath();
      String getShopId();
 }

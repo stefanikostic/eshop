@@ -48,6 +48,11 @@ public class Product extends AbstractEntity<ProductId> {
     @JoinColumn(name="productId", referencedColumnName="id")
     private Set<ProductItem> productItems = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="productId", referencedColumnName="id")
+    private Set<ProductImage> productImages = new HashSet<>();
+
+
     @ManyToOne
     private Category category;
 

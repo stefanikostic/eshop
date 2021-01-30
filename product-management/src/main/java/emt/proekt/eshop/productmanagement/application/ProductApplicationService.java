@@ -1,42 +1,60 @@
 package emt.proekt.eshop.productmanagement.application;
 
+import com.google.cloud.storage.*;
 import emt.proekt.eshop.productmanagement.domain.exceptions.CategoryNotFoundException;
+import emt.proekt.eshop.productmanagement.domain.exceptions.ProductImagesNotSavedException;
 import emt.proekt.eshop.productmanagement.domain.exceptions.ProductNotFoundException;
 import emt.proekt.eshop.productmanagement.domain.exceptions.ProductNotSavedException;
 import emt.proekt.eshop.productmanagement.domain.model.*;
 import emt.proekt.eshop.productmanagement.domain.modelDTOS.*;
-import emt.proekt.eshop.productmanagement.domain.repository.AttributeRepository;
-import emt.proekt.eshop.productmanagement.domain.repository.CategoryRepository;
-import emt.proekt.eshop.productmanagement.domain.repository.ProductItemRepository;
-import emt.proekt.eshop.productmanagement.domain.repository.ProductRepository;
+import emt.proekt.eshop.productmanagement.domain.repository.*;
 import emt.proekt.eshop.productmanagement.domain.service.ProductService;
 import emt.proekt.eshop.sharedkernel.domain.base.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductApplicationService {
 
     private final ProductService productService;
+    private final ProductImagesRepository productImagesRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
     private final ProductItemRepository productItemRepository;
+    private Storage storage;
+    private Bucket bucket;
+    private int imageId;
 
-    public ProductApplicationService(ProductService productService, ProductRepository productRepository, CategoryRepository categoryRepository, AttributeRepository attributeRepository, ProductItemRepository productItemRepository) {
+    private static Semaphore imageSemaphore;
+    private final Set<String> contentTypes;
+
+    public ProductApplicationService(ProductService productService, ProductImagesRepository productImagesRepository, ProductRepository productRepository, CategoryRepository categoryRepository, AttributeRepository attributeRepository, ProductItemRepository productItemRepository) {
         this.productService = productService;
+        this.productImagesRepository = productImagesRepository;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.attributeRepository = attributeRepository;
         this.productItemRepository = productItemRepository;
+
+        this.contentTypes = new HashSet<>();
+        this.contentTypes.add("image/png");
+        this.contentTypes.add("image/jpeg");
+        this.contentTypes.add("image/jpg");
+        storage = StorageOptions.getDefaultInstance().getService();
+        bucket = getBucket("eshopmk-78147.appspot.com");
+        imageId = 0;
+        imageSemaphore = new Semaphore(1);
     }
 
     @Transactional
@@ -93,8 +111,8 @@ public class ProductApplicationService {
     private List<ProductForMainPageDTO> createProductForMainPageDTO(List<ProductsForMainPageProjection> products) {
 
         return products.stream().map(productsProjection -> {
-            //  URL imageUrl = productImagesService.downloadProductImage(productsProjection.getImagePath());
-            return new ProductForMainPageDTO(productsProjection.getProductId(), productsProjection.getProductName(), productsProjection.getProductDescription(), productsProjection.getPrice(), productsProjection.getCurrency(), productsProjection.getShopId());
+            URL imageUrl = downloadProductImage(productsProjection.getImagePath());
+            return new ProductForMainPageDTO(productsProjection.getProductId(), productsProjection.getProductName(), productsProjection.getProductDescription(), productsProjection.getPrice(), productsProjection.getCurrency(), imageUrl, productsProjection.getShopId());
         }).collect(Collectors.toList());
     }
 
@@ -128,12 +146,83 @@ public class ProductApplicationService {
         }
         List<ProductItem> productItems = productItemRepository.findAllByProductAndDeletedFalse(productDTO.get(0).getProductId());
 
-        // List<String> imagePaths = productDTO.parallelStream().map(ProductDTO::getImagePath).collect(Collectors.toList());
-        List<URL> productImages = new ArrayList<>(); //productImagesService.getProductImages(imagePaths);
+        List<String> imagePaths = productDTO.parallelStream().map(ProductDTO::getImagePath).collect(Collectors.toList());
+        List<URL> productImages = getProductImages(imagePaths);
         List<ProductReviewDTO> productReviews = new ArrayList<>(); //productReviewService.findAllByProductId(productId);
         return new ProductDetailsDTO(productDTO.get(0).getProductId(), productDTO.get(0).getProductName(), productDTO.get(0).getProductDescription(), productDTO.get(0).getPrice(), productDTO.get(0).getCurrency(), productImages, productItems, productReviews);
     }
 
+    private List<URL> getProductImages(List<String> productImagesPaths) {
+        return productImagesPaths.parallelStream().map(this::downloadProductImage).collect(Collectors.toList());
+    }
+
+    private URL downloadProductImage(String imageBlob) {
+        //TODO CHANGE IN imageBlob
+        BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(bucket.getName(), imageBlob)).build();
+        return storage.signUrl(blobInfo, 15, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature());
+    }
+
+    // Check for bucket existence and create if needed.
+    private Bucket getBucket(String bucketName) {
+        bucket = storage.get(bucketName);
+        return bucket;
+    }
+
+    public void uploadOneProductImage(MultipartFile image,
+                                      Product product,
+                                      String shopName) throws IOException, InterruptedException {
+
+        byte[] bytes = image.getBytes();
+        System.out.println("uploadOneProductImage");
+
+        String productName = product.getName();
+
+        imageSemaphore.acquire();
+        String imagePath = shopName + "_" + productName + "_" + imageId;
+        imageId--;
+        imageSemaphore.release();
+
+
+        ProductImage productImage = new ProductImage(imagePath, product.id());
+        Blob blob = bucket.create(imagePath, bytes, image.getContentType());
+
+        productImagesRepository.save(productImage);
+    }
+
+    public void uploadProductImages(MultipartFile[] productImagesList,
+                                    String productId,
+                                    String shopName) {
+        if (productImagesList != null && productImagesList.length != 0) {
+            Product product = productRepository.findProductByIdAndDeleted(new ProductId(productId), false);
+            if (product == null) {
+                throw new ProductImagesNotSavedException();
+            }
+            Arrays.stream(productImagesList).parallel().forEach(image -> {
+                String imageContentType = image.getContentType();
+                boolean notMatch = true;
+                for (String cType : contentTypes) {
+                    if (cType.equals(imageContentType)) {
+                        notMatch = false;
+                        break;
+                    }
+                }
+                if (notMatch) {
+                    throw new ProductImagesNotSavedException();
+                }
+            });
+            imageId = productImagesList.length;
+            Arrays.stream(productImagesList).parallel().forEach(image -> {
+
+                try {
+                    uploadOneProductImage(image, product, shopName);
+                } catch (IOException | InterruptedException e) {
+                    throw new ProductImagesNotSavedException();
+                }
+            });
+        } else {
+            throw new ProductImagesNotSavedException();
+        }
+    }
 
     public Page<ProductForMainPageDTO> getProductsFromShop(int page,
                                                            int size,
@@ -193,5 +282,6 @@ public class ProductApplicationService {
             throw new ProductNotFoundException();
         }
     }
+
 
 }

@@ -4,26 +4,28 @@ import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
 import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name="product_images")
 public class ProductImage extends AbstractEntity<ProductImageId> {
 
     private String imagePath;
 
-    @Embedded
-    @AttributeOverride(name="id",column = @Column(name="product_id", nullable = false))
-    private ProductId productId;
+
+    @Column(name = "productId")
+    private String product;
 
 
     public ProductImage(String imagePath, ProductId productId) {
         super(DomainObjectId.randomId(ProductImageId.class));
         this.imagePath = imagePath;
-        this.productId = productId;
+        this.product = productId.getId();
     }
 
     @Override
