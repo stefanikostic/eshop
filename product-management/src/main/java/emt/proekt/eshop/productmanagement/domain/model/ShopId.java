@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class ShopId extends DomainObjectId {
-    private ShopId() {
+    public ShopId() {
         super(DomainObjectId.randomId(ShopId.class).toString());
     }
     @JsonCreator

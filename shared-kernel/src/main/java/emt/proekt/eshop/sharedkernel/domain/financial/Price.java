@@ -2,7 +2,6 @@ package emt.proekt.eshop.sharedkernel.domain.financial;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Value;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -13,14 +12,10 @@ import java.util.Objects;
 @Getter
 public class Price {
     @Enumerated(value = EnumType.STRING)
-    private final Currency currency;
+    private Currency currency;
 
-    private final int price;
+    private int price;
 
-    private Price() {
-        this.currency=null;
-        this.price = 0;
-    }
 
     public Price(@NonNull int price, Currency currency) {
         if(currency == null){
@@ -28,6 +23,10 @@ public class Price {
         }
         this.price = price;
         this.currency = currency;
+    }
+
+    public Price () {
+
     }
 
     public Price add(Price amount) {

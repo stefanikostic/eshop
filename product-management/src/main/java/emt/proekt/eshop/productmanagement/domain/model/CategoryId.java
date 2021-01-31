@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class CategoryId extends DomainObjectId {
-    private CategoryId(){
+    public CategoryId(){
         super(DomainObjectId.randomId(CategoryId.class).toString());
     }
     public CategoryId(String id) {
