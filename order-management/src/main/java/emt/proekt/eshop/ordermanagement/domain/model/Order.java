@@ -33,6 +33,9 @@ public class Order extends AbstractEntity<OrderId> {
 
     private OrderStatus status;
 
+    @Column(name = "token_id")
+    private String tokenId;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "price", column = @Column(name = "price_total")),
@@ -43,27 +46,33 @@ public class Order extends AbstractEntity<OrderId> {
     public Order() {
     }
 
-    public Order(Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, Price totalPrice) {
+    public Order (Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, String tokenId, Price totalPrice) {
         this.dateCreated = dateCreated;
         this.userId = userId;
         this.dateShipping = dateShipping;
         this.addressShipping = addressShipping;
         this.status = status;
+        this.tokenId = tokenId;
         this.totalPrice = totalPrice;
     }
 
-    public Order(OrderId id, Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, Price totalPrice) {
+    public Order (OrderId id, Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, String tokenId, Price totalPrice) {
         super(id);
         this.dateCreated = dateCreated;
         this.userId = userId;
         this.dateShipping = dateShipping;
         this.addressShipping = addressShipping;
         this.status = status;
+        this.tokenId = tokenId;
         this.totalPrice = totalPrice;
     }
 
     @Override
     public OrderId id() {
         return null;
+    }
+
+    public Price getTotalPrice () {
+        return totalPrice;
     }
 }

@@ -9,13 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.var;
-import org.w3c.dom.Attr;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -67,6 +64,10 @@ public class Product extends AbstractEntity<ProductId> {
         this.shopId = shopId;
         this.category = category;
         this.createdDate = LocalDateTime.now();
+    }
+
+    public Product () {
+
     }
 
     public void setDeleted(boolean deleted) {
