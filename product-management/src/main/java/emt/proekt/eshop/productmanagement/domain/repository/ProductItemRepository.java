@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -16,4 +17,6 @@ public interface ProductItemRepository extends JpaRepository<ProductItem, Produc
     @EntityGraph(attributePaths = "attributes")
     @Query("select pI from ProductItem pI where pI.product=:product")
     List<ProductItem> findAllByProductAndDeletedFalse(String product);
+
+    Optional<ProductItem> findByIdAndDeletedFalse(ProductItemId productItemId);
 }

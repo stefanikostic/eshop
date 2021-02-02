@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,6 +21,9 @@ public class ProductItem extends AbstractEntity<ProductItemId> {
 
     @Column(name = "price", nullable = false)
     private Price price;
+
+    @Version
+    private Long version;
 
     @Column(name = "quantity", nullable = false)
     private int quantityInStock;

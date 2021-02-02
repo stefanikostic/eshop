@@ -1,6 +1,5 @@
 package emt.proekt.eshop.sharedkernel.domain.geo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import emt.proekt.eshop.sharedkernel.domain.base.ValueObject;
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,7 +9,6 @@ import java.util.Objects;
 
 @Embeddable
 @Getter
-@MappedSuperclass
 public class Address implements ValueObject {
 
     @Column(name = "address")
@@ -20,11 +18,7 @@ public class Address implements ValueObject {
     @Embedded
     private City city;
 
-    @Column(name = "country")
-    @Enumerated(EnumType.STRING)
-    private Country country;
-
-    @Column(name = "postal_code")
+    @Column(name = "postalcode")
     private String postalCode;
 
     @SuppressWarnings("unused") // Used by JPA only.
@@ -32,10 +26,9 @@ public class Address implements ValueObject {
     }
 
     public Address(@NonNull String address, @NonNull City city,
-                   @NonNull Country country, String postalCode) {
+                    String postalCode) {
         this.address = address;
         this.city = city;
-        this.country = country;
         this.postalCode = postalCode;
     }
 
@@ -45,13 +38,12 @@ public class Address implements ValueObject {
         if (o == null || getClass() != o.getClass()) return false;
         Address address = (Address) o;
         return Objects.equals(this.address, address.address) &&
-                Objects.equals(this.city, address.city) &&
-                this.country == address.country && this.postalCode.equals(address.postalCode);
+                Objects.equals(this.city, address.city)  && this.postalCode.equals(address.postalCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, city, country);
+        return Objects.hash(address, city);
     }
 
     @Override
@@ -60,30 +52,6 @@ public class Address implements ValueObject {
                 ", " +
                 city +
                 ", " +
-                country +
-                ", " +
                 postalCode;
     }
-
-    @org.springframework.lang.NonNull
-    @JsonProperty("address")
-    public String address() {
-        return address;
-    }
-
-    @org.springframework.lang.NonNull
-    @JsonProperty("city")
-    public City city() {
-        return city;
-    }
-
-    @org.springframework.lang.NonNull
-    @JsonProperty("country")
-    public Country country() {
-        return country;
-    }
-
-    @JsonProperty("postal_code")
-    public String postalCode() { return postalCode; }
-
 }

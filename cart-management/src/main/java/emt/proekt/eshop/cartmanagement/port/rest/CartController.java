@@ -1,18 +1,14 @@
 package emt.proekt.eshop.cartmanagement.port.rest;
 import emt.proekt.eshop.cartmanagement.application.CartService;
+import emt.proekt.eshop.cartmanagement.application.dtos.AddCartItemRequestDTO;
+import emt.proekt.eshop.cartmanagement.application.dtos.RemoveCartItem;
 import emt.proekt.eshop.cartmanagement.domain.model.Cart;
-import emt.proekt.eshop.cartmanagement.domain.model.CartId;
-import emt.proekt.eshop.cartmanagement.domain.model.UserId;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/carts")
 public class CartController {
     private final CartService cartService;
 
@@ -20,22 +16,22 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cart> findById(@PathVariable("id") String cartId) {
-        return cartService.findById(new CartId(cartId))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping(path = "/{userId}")
+    public ResponseEntity<Cart> getCartFromUser(@PathVariable String userId){
+        Cart cart = cartService.findCartByCurrentUser(userId);
+        return ResponseEntity.ok(cart);
     }
 
-    @GetMapping
-    public List<Cart> findAll() {
-        return cartService.findAll();
+
+    @PatchMapping(path="/addProductItem")
+    public ResponseEntity<?> addToCart(@RequestBody AddCartItemRequestDTO cartItemRequest, @RequestHeader("Authorization") String token){
+        this.cartService.addToCart(cartItemRequest, token);
+        return ResponseEntity.ok().body("Cart item added");
     }
 
-    @GetMapping("/findByUser/{id}")
-    public ResponseEntity<Cart> findCartByUser(@PathVariable("id") String userId) {
-        return cartService.findCartByUser(new UserId(userId))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @DeleteMapping(path="/deleteProductItem")
+    public ResponseEntity<?> deleteFromCart(@RequestBody RemoveCartItem cartItemRequest) throws NotFoundException {
+        this.cartService.deleteFromCart(cartItemRequest);
+        return ResponseEntity.ok().body("Cart item deleted");
     }
 }

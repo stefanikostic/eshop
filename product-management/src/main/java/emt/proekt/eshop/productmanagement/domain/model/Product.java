@@ -18,7 +18,6 @@ import java.util.Set;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Table(name = "products")
 public class Product extends AbstractEntity<ProductId> {
     @Column(name = "product_name", nullable = false)

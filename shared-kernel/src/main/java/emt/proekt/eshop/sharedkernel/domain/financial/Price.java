@@ -18,37 +18,37 @@ public class Price {
 
 
     public Price(@NonNull int price, Currency currency) {
-        if(currency == null){
+        if (currency == null) {
             currency = Currency.EUROS;
         }
         this.price = price;
         this.currency = currency;
     }
 
-    public Price () {
+    public Price() {
 
     }
 
     public Price add(Price amount) {
-        if(!currency.equals(amount.currency)) {
+        if (!currency.equals(amount.currency)) {
             throw new IllegalArgumentException("Prices are from different currency");
         }
-        return new Price(price+amount.price, currency);
+        return new Price(price + amount.price, currency);
     }
 
     public Price substract(Price amount) {
-        if(!currency.equals(amount.currency)) {
+        if (!currency.equals(amount.currency)) {
             throw new IllegalArgumentException("Prices are from different currency");
         }
-        return new Price(price-amount.price, currency);
+        return new Price(price - amount.price, currency);
     }
 
     public Price multiply(int q) {
-        return new Price(price*q, currency);
+        return new Price(price * q, currency);
     }
 
     public Price calculateDiscount(int discount) {
-        Price newPrice = new Price(price - (price * discount)/100, currency);
+        Price newPrice = new Price(price - (price * discount) / 100, currency);
         return newPrice;
     }
 

@@ -1,40 +1,51 @@
 package emt.proekt.eshop.ordermanagement.domain.model;
 
 import com.sun.istack.NotNull;
+import emt.proekt.eshop.ordermanagement.domain.model.dtos.AddressDTO;
 import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
+import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 import emt.proekt.eshop.sharedkernel.domain.financial.Price;
 import emt.proekt.eshop.sharedkernel.domain.geo.Address;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name="order")
+@Table(name = "orders")
 @Getter
 public class Order extends AbstractEntity<OrderId> {
 
     @CreatedDate
     @NotNull
     @Column(name = "date_created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated = new Date();
+    private LocalDateTime dateCreated;
 
     @Embedded
-    @AttributeOverride(name="id", column = @Column(name="user_id", nullable = false))
+    @AttributeOverride(name = "id", column = @Column(name = "user_id", nullable = false))
     private UserId userId;
 
     @Column(name = "date_shipping")
     private Date dateShipping;
 
     @Column(name = "address_shipping")
+    @Embedded
     private Address addressShipping;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Column(name = "token_id")
     private String tokenId;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name="orderId", referencedColumnName="id")
+    private Set<OrderItem> orderItems;
 
     @Embedded
     @AttributeOverrides({
@@ -46,33 +57,22 @@ public class Order extends AbstractEntity<OrderId> {
     public Order() {
     }
 
-    public Order (Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, String tokenId, Price totalPrice) {
+    public Order(LocalDateTime dateCreated, UserId userId, Price totalPrice, Address addressShipping, String tokenId) {
+        super(DomainObjectId.randomId(OrderId.class));
         this.dateCreated = dateCreated;
         this.userId = userId;
-        this.dateShipping = dateShipping;
-        this.addressShipping = addressShipping;
-        this.status = status;
-        this.tokenId = tokenId;
+        this.status = OrderStatus.INITIATED;
         this.totalPrice = totalPrice;
-    }
-
-    public Order (OrderId id, Date dateCreated, UserId userId, Date dateShipping, Address addressShipping, OrderStatus status, String tokenId, Price totalPrice) {
-        super(id);
-        this.dateCreated = dateCreated;
-        this.userId = userId;
-        this.dateShipping = dateShipping;
         this.addressShipping = addressShipping;
-        this.status = status;
         this.tokenId = tokenId;
-        this.totalPrice = totalPrice;
+        orderItems = new HashSet<>();
     }
 
-    @Override
-    public OrderId id() {
-        return null;
+    public void addOrderItem(OrderItem orderItem){
+        this.orderItems.add(orderItem);
     }
-
-    public Price getTotalPrice () {
+//Address addressShipping, String tokenId,
+    public Price getTotalPrice() {
         return totalPrice;
     }
 }

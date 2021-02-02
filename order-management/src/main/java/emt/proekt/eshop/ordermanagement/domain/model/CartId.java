@@ -4,13 +4,16 @@ import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 
 import javax.persistence.Embeddable;
 
+
 @Embeddable
-public class OrderItemId extends DomainObjectId {
-    private OrderItemId() {
-        super(DomainObjectId.randomId(OrderItemId.class).toString());
+public class CartId extends DomainObjectId {
+    private CartId() {
+        super(DomainObjectId.randomId(CartId.class).toString());
     }
 
-    public OrderItemId(String id) {
+    public CartId(String id) {
         super(id);
     }
 }
+
+

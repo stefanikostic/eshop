@@ -1,17 +1,15 @@
 package emt.proekt.eshop.productmanagement.port.rest;
 
 import emt.proekt.eshop.productmanagement.application.ProductApplicationService;
-import emt.proekt.eshop.productmanagement.domain.model.Product;
-import emt.proekt.eshop.productmanagement.domain.model.ProductId;
+
+import emt.proekt.eshop.productmanagement.domain.modelDTOS.CartItemRequestDTO;
 import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductCreationDTO;
 import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductDetailsDTO;
 import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductForMainPageDTO;
 import emt.proekt.eshop.sharedkernel.domain.base.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 public class ProductController {
@@ -54,5 +52,10 @@ public class ProductController {
         }
     }
 
+    @PutMapping(path = "/decrementProductQuantity")
+    public ResponseEntity<?> decrementProductItemsQuantity(@RequestBody CartItemRequestDTO cartItem){
+        productService.decrementProductItemsQty(cartItem);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

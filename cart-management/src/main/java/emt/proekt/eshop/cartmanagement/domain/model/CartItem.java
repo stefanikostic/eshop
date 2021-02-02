@@ -2,11 +2,14 @@ package emt.proekt.eshop.cartmanagement.domain.model;
 
 import com.sun.istack.NotNull;
 import emt.proekt.eshop.sharedkernel.domain.base.AbstractEntity;
+import emt.proekt.eshop.sharedkernel.domain.base.DomainObjectId;
 import emt.proekt.eshop.sharedkernel.domain.financial.Price;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -14,19 +17,19 @@ import java.util.Date;
 @Getter
 public class CartItem extends AbstractEntity<CartItemId> {
 
-    @Embedded
-    @AttributeOverride(name="id",column = @Column(name="cart_id", nullable = false))
-    private CartId cartId;
 
     @Embedded
-    @AttributeOverride(name="id",column = @Column(name="product_item_id", nullable = false))
+    @AttributeOverride(name = "id", column = @Column(name = "product_item_id", nullable = false))
     private ProductItemId productItemId;
 
     @CreatedDate
     @NotNull
     @Column(name = "date_created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated = new Date();
+    private LocalDateTime dateCreated;
+
+
+    @Column(name = "productName", nullable = false)
+    private String productName;
 
     @Embedded
     @AttributeOverrides({
@@ -35,35 +38,29 @@ public class CartItem extends AbstractEntity<CartItemId> {
     })
     private Price price;
 
-    @Column(name="image_path")
-    private String imagePath;
-
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    public CartItem() {}
 
-    public CartItem(CartId cartId, ProductItemId productItemId, Date dateCreated, Price price, String imagePath, int quantity) {
-        this.cartId = cartId;
-        this.productItemId = productItemId;
-        this.dateCreated = dateCreated;
-        this.price = price;
-        this.imagePath = imagePath;
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public CartItem(CartItemId id, CartId cartId, ProductItemId productItemId, Date dateCreated, Price price, String imagePath, int quantity) {
-        super(id);
-        this.cartId = cartId;
+    public Price subTotal() {
+        return price.multiply(quantity);
+    }
+
+    public CartItem() {
+    }
+
+    public CartItem(ProductItemId productItemId, Price price, int quantity, String productName) {
+        super(DomainObjectId.randomId(CartItemId.class));
+
         this.productItemId = productItemId;
-        this.dateCreated = dateCreated;
+        this.dateCreated = LocalDateTime.now();
         this.price = price;
-        this.imagePath = imagePath;
+        this.productName = productName;
         this.quantity = quantity;
     }
 
-    @Override
-    public CartItemId id() {
-        return null;
-    }
 }

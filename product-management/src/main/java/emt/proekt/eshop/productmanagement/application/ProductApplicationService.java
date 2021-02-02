@@ -1,17 +1,17 @@
 package emt.proekt.eshop.productmanagement.application;
 
 import com.google.cloud.storage.*;
-import emt.proekt.eshop.productmanagement.domain.exceptions.CategoryNotFoundException;
-import emt.proekt.eshop.productmanagement.domain.exceptions.ProductImagesNotSavedException;
-import emt.proekt.eshop.productmanagement.domain.exceptions.ProductNotFoundException;
-import emt.proekt.eshop.productmanagement.domain.exceptions.ProductNotSavedException;
+import emt.proekt.eshop.productmanagement.domain.exceptions.*;
 import emt.proekt.eshop.productmanagement.domain.model.*;
 import emt.proekt.eshop.productmanagement.domain.modelDTOS.*;
 import emt.proekt.eshop.productmanagement.domain.repository.*;
 import emt.proekt.eshop.productmanagement.domain.service.ProductService;
 import emt.proekt.eshop.sharedkernel.domain.base.Page;
+import emt.proekt.eshop.sharedkernel.events.CartItemRemovedEvent;
+import emt.proekt.eshop.sharedkernel.events.ShopCreatedEvent;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -284,4 +284,32 @@ public class ProductApplicationService {
     }
 
 
+    @Transactional
+    public void decrementProductItemsQty(CartItemRequestDTO cartItem) {
+        try {
+            ProductItem productItem = productItemRepository.findByIdAndDeletedFalse(new ProductItemId(cartItem.getProductItemId())).orElseThrow(ProductItemNotFoundException::new);
+
+            productItem.subtractQuantity(cartItem.getCartItemQuantity());
+            productItemRepository.save(productItem);
+
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
+    }
+
+    @KafkaListener(topics = "removedCartItemsTopic", groupId = "group_id",
+            containerFactory = "cartItemRemovedListenerFactory")
+    @org.springframework.transaction.annotation.Transactional
+    public void onCartItemRemoved(CartItemRemovedEvent cartItemRemovedEvent) {
+        System.out.println("Consumed JSON Message: " + cartItemRemovedEvent);
+
+        try {
+            ProductItem productItem = productItemRepository.findByIdAndDeletedFalse(new ProductItemId(cartItemRemovedEvent.getProductItemId())).orElseThrow(ProductItemNotFoundException::new);
+            productItem.addQuantity(cartItemRemovedEvent.getQuantity());
+            productItemRepository.save(productItem);
+
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
+    }
 }
