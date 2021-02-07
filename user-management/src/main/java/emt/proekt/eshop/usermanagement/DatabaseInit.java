@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "app.db-init", havingValue = "true")
+@ConditionalOnProperty(name = "app.db-init")
 public class DatabaseInit implements CommandLineRunner {
     private final RolesRepository rolesRepository;
     private final UsersRepository usersRepository;
@@ -31,8 +31,9 @@ public class DatabaseInit implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        this.rolesRepository.deleteAll();
+
         this.usersRepository.deleteAll();
+        this.rolesRepository.deleteAll();
 
             Role userRole = new Role("USER");
             Role salesRole = new Role("SALES");
