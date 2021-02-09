@@ -91,9 +91,11 @@ public class ShopService {
                                 String shopId) throws IOException, InterruptedException {
         byte[] bytes = image.getBytes();
 
-        ShopDTO<ShopId> shop = shopRepository.getShop(shopId).orElseThrow(ShopNotFoundException::new);
+        Shop shop = shopRepository.findShop(shopId).orElseThrow(ShopNotFoundException::new);
 
-        Blob blob = bucket.create(shop.getShopName(), bytes, image.getContentType());
+        Blob blob = bucket.create(shop.getName(), bytes, image.getContentType());
+        shop.setShopImage(shop.getName());
+        shopRepository.save(shop);
     }
 
     public URL downloadShopImage(String imageBlob) {

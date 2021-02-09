@@ -53,9 +53,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/signin", "/api/users/createUser", "/shops/public/**", "/products/**", "/products/categories/**", "/products/attributes/**").permitAll()
+                .antMatchers("/api/auth/signin","/login", "/api/users/createUser", "/shops/public/**", "/products/**", "/products/categories/**", "/products/attributes/**").permitAll()
                 .antMatchers("/shops/management/create").access("hasRole('USER') and !hasAnyRole('SHOPMANAGER','SALES')")
-                .antMatchers("/shops/management/{shopId}/uploadImage").hasRole("SHOPMANAGER")
+                .antMatchers("/shops/management/{shopId}/uploadImage").hasRole("USER")
 
                 .antMatchers("products/{productId}/uploadImages").hasAnyRole("SHOPMANAGER", "SALES")
                 .antMatchers("/carts/**").hasRole("USER")

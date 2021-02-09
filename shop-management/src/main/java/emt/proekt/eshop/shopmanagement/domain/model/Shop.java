@@ -33,6 +33,9 @@ public class Shop extends AbstractEntity<ShopId> {
     public Shop() {
     }
 
+    public void setShopImage(String shopImage){
+        this.shopLogoImage = shopImage;
+    }
     public Shop(String name, String shopBankAccount, String shopUTN, String shopDescription, String shopLogoImage, LocalDateTime createdDate) {
         super(DomainObjectId.randomId(ShopId.class));
         this.name = name;

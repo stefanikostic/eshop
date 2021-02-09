@@ -1,11 +1,11 @@
 package emt.proekt.eshop.productmanagement;
 
-import emt.proekt.eshop.productmanagement.domain.model.Attribute;
-import emt.proekt.eshop.productmanagement.domain.model.Category;
-import emt.proekt.eshop.productmanagement.domain.model.CategoryId;
+import emt.proekt.eshop.productmanagement.domain.model.*;
+import emt.proekt.eshop.productmanagement.domain.modelDTOS.ProductItemCreationDTO;
 import emt.proekt.eshop.productmanagement.domain.repository.AttributeRepository;
 import emt.proekt.eshop.productmanagement.domain.repository.CategoryRepository;
 import emt.proekt.eshop.productmanagement.domain.repository.ProductItemRepository;
+import emt.proekt.eshop.productmanagement.domain.repository.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;

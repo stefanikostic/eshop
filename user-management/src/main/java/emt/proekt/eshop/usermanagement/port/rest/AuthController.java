@@ -45,7 +45,6 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) usersService.loadUserByUsername(loginRequest.getUsername());
         List<GrantedAuthority> roles = new ArrayList<>(userDetails.getAuthorities());
-        logger.debug("" + userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getUser().id(),
                 userDetails.getUsername(),

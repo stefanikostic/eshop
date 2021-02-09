@@ -30,6 +30,10 @@ public class ShopRepositoryImpl {
         return shopRepository.findShopById(new ShopId(shopId));
     }
 
+    public Optional<Shop> findShop(String shopId){
+
+        return shopRepository.findById(new ShopId(shopId));
+    }
     public org.springframework.data.domain.Page<ShopDTO<ShopId>> findAllShops(String query, int page,int size){
         if (!query.equals("")){
             return shopRepository.findShopsBy(query, PageRequest.of(page,size));
