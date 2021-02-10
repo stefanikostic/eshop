@@ -34,7 +34,7 @@ public class Cart extends AbstractEntity<CartId> {
     public Cart(UserId userId) {
         super(DomainObjectId.randomId(CartId.class));
         this.userId = userId;
-        this.total = new Price(0, Currency.EUROS);
+        this.total = new Price(0, Currency.EUR);
         cartItems = new HashSet<>();
     }
 

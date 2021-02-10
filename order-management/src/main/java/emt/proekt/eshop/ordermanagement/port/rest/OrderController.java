@@ -43,14 +43,14 @@ public class OrderController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest, @RequestHeader("Authorization") String token){
+    public ResponseEntity<String> createOrder(@RequestBody OrderRequest orderRequest, @RequestHeader("Authorization") String token){
         try {
             Cart cart = cartClient.findByUserId(new UserId(orderRequest.getUserId()), token);
             if(cart.getCartItems().size() == 0){
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Your cart is empty", HttpStatus.BAD_REQUEST);
             }
-            orderService.createOrder(orderRequest, cart);
-            return new ResponseEntity<>(HttpStatus.OK);
+            String id = orderService.createOrder(orderRequest, cart);
+            return new ResponseEntity<>(id, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

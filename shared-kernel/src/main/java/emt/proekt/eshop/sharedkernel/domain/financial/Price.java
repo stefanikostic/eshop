@@ -19,7 +19,7 @@ public class Price {
 
     public Price(@NonNull int price, Currency currency) {
         if (currency == null) {
-            currency = Currency.EUROS;
+            currency = Currency.EUR;
         }
         this.price = price;
         this.currency = currency;

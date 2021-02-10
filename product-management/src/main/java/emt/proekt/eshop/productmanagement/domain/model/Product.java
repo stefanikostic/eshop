@@ -92,7 +92,7 @@ public class Product extends AbstractEntity<ProductId> {
 
     public ProductItem addProductItem(@NonNull ProductItemCreationDTO productItemDTO, Set<Attribute> productItemAttributes) {
         Objects.requireNonNull(productItemDTO, "product must not be null");
-        var item = new ProductItem(false, new Price(productItemDTO.getPrice(), Currency.EUROS), productItemDTO.getQuantity(), productItemAttributes, id);
+        var item = new ProductItem(false, new Price(productItemDTO.getPrice(), Currency.EUR), productItemDTO.getQuantity(), productItemAttributes, id);
         productItems.add(item);
         return item;
     }

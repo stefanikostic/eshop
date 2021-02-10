@@ -55,13 +55,13 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrder(OrderRequest orderRequest, Cart cart) throws StripeException {
+    public String createOrder(OrderRequest orderRequest, Cart cart) throws StripeException {
         String address = orderRequest.getAddressShipping().getAddress();
         City city = new City(orderRequest.getAddressShipping().getCity());
         String postalcode = orderRequest.getAddressShipping().getPostalCode();
         Order order = new Order(LocalDateTime.now(), new UserId(orderRequest.getUserId()), cart.getTotal(), new Address(address, city, postalcode), orderRequest.getStripeToken());
         cart.getCartItems().forEach(ci -> order.addOrderItem(new OrderItem(order.id().getId(), ci.getProductItemId(), ci.getPrice(), ci.getQuantity())));
         Order created = orderRepository.save(order);
-        paymentService.charge(created);
+        return paymentService.charge(created);
     }
 }
