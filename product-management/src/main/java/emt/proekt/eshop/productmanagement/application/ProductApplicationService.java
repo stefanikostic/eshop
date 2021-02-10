@@ -177,10 +177,7 @@ public class ProductApplicationService {
 
         String productName = product.getName();
 
-        imageSemaphore.acquire();
-        String imagePath = shopName + "_" + productName + "_" + imageId;
-        imageId--;
-        imageSemaphore.release();
+        String imagePath = shopName + "_" + productName + "_" + 1;
 
 
         ProductImage productImage = new ProductImage(imagePath, product.id());
@@ -189,36 +186,31 @@ public class ProductApplicationService {
         productImagesRepository.save(productImage);
     }
 
-    public void uploadProductImages(MultipartFile[] productImagesList,
+    public void uploadProductImages(MultipartFile productImage,
                                     String productId,
                                     String shopName) {
-        if (productImagesList != null && productImagesList.length != 0) {
+        if (productImage != null) {
             Product product = productRepository.findProductByIdAndDeleted(new ProductId(productId), false);
             if (product == null) {
                 throw new ProductImagesNotSavedException();
             }
-            Arrays.stream(productImagesList).parallel().forEach(image -> {
-                String imageContentType = image.getContentType();
-                boolean notMatch = true;
-                for (String cType : contentTypes) {
-                    if (cType.equals(imageContentType)) {
-                        notMatch = false;
-                        break;
-                    }
+            String imageContentType = productImage.getContentType();
+            boolean notMatch = true;
+            for (String cType : contentTypes) {
+                if (cType.equals(imageContentType)) {
+                    notMatch = false;
+                    break;
                 }
-                if (notMatch) {
-                    throw new ProductImagesNotSavedException();
-                }
-            });
-            imageId = productImagesList.length;
-            Arrays.stream(productImagesList).parallel().forEach(image -> {
+            }
+            if (notMatch) {
+                throw new ProductImagesNotSavedException();
+            }
 
-                try {
-                    uploadOneProductImage(image, product, shopName);
-                } catch (IOException | InterruptedException e) {
-                    throw new ProductImagesNotSavedException();
-                }
-            });
+            try {
+                uploadOneProductImage(productImage, product, shopName);
+            } catch (IOException | InterruptedException e) {
+                throw new ProductImagesNotSavedException();
+            }
         } else {
             throw new ProductImagesNotSavedException();
         }
