@@ -13,7 +13,7 @@ public class ProductDetailsDTO {
     private String productId;
     private String productName;
     private String productDescription;
-    private int price;
+    private double price;
     private Currency currency;
     private List<URL> imagesUrls;
     private List<ProductItem> productItems;
@@ -22,7 +22,7 @@ public class ProductDetailsDTO {
     public ProductDetailsDTO(String productId,
                              String productName,
                              String productDescription,
-                             int price,
+                             double price,
                              Currency currency,
                              List<URL> imagesUrls,
                              List<ProductItem> productItems,

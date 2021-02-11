@@ -6,6 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class UploadPhotos {
 
-    MultipartFile[] productImages;
+    MultipartFile productImage;
     String shopName;
 }

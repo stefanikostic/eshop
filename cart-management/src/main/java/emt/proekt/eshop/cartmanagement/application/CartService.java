@@ -6,8 +6,10 @@ import emt.proekt.eshop.cartmanagement.domain.model.*;
 import emt.proekt.eshop.cartmanagement.domain.repository.CartRepository;
 import emt.proekt.eshop.cartmanagement.port.client.IProductClient;
 import emt.proekt.eshop.sharedkernel.events.CartItemRemovedEvent;
+import emt.proekt.eshop.sharedkernel.events.OrderCreatedEvent;
 import javassist.NotFoundException;
 
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +57,6 @@ public class CartService {
                         cart.get().getCartItems().remove(cartItem);
                         cart.get().updateTotal();
                         cartRepository.save(cart.get());
-
 
                         kafkaTemplate.send(TOPIC, new CartItemRemovedEvent(cartItem.getProductItemId().getId(), cartItem.getQuantity(), LocalDateTime.now().toString()));
                         break;
@@ -109,5 +110,21 @@ public class CartService {
             throw new RuntimeException();
         }
 
+    }
+
+    @KafkaListener(topics = "orderCreatedTopic", groupId = "group_id",
+            containerFactory = "orderCreatedListenerFactory")
+    @org.springframework.transaction.annotation.Transactional
+    public void onCartItemRemoved(OrderCreatedEvent orderCreatedEvent) {
+        System.out.println("Consumed JSON Message: " + orderCreatedEvent);
+
+        try {
+            Optional<Cart> cart = cartRepository.findByUserId(new UserId(orderCreatedEvent.getUserId()));
+            cart.get().clear();
+            cart.get().updateTotal();
+            cartRepository.save(cart.get());
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
     }
 }

@@ -16,10 +16,10 @@ public class ProductImagesController {
         this.productService = productService;
     }
 
-    @PostMapping(path = "/{productId}/uploadImages")
+    @PostMapping(path = "/{productId}/uploadImages/{shopName}")
     public ResponseEntity<?> uploadProductImages(@PathVariable String productId,
-                                                 @RequestParam MultipartFile productImage,
-                                                 @RequestParam String shopName) {
+                                                 @PathVariable String shopName,
+                                                 @RequestParam MultipartFile productImage) {
         productService.uploadProductImages(productImage, productId, shopName);
 
         return ResponseEntity.ok("Upload photos successfully!");

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ProductItemCreationDTO {
 
-    private int price;
+    private double price;
     private int quantity;
     private List<Attribute> productItemAttributes;
 }

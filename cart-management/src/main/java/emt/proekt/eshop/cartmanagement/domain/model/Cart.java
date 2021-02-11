@@ -50,4 +50,7 @@ public class Cart extends AbstractEntity<CartId> {
         this.total = total();
     }
 
+    public void clear() {
+        this.getCartItems().clear();
+    }
 }

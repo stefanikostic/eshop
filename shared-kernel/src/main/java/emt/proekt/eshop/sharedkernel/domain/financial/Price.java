@@ -14,10 +14,10 @@ public class Price {
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
 
-    private int price;
+    private double price;
 
 
-    public Price(@NonNull int price, Currency currency) {
+    public Price(@NonNull double price, Currency currency) {
         if (currency == null) {
             currency = Currency.EUR;
         }

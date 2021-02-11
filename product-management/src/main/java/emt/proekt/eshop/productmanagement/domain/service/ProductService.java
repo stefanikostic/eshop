@@ -28,7 +28,7 @@ public class ProductService {
 
         Product product = new Product(productCreationDTO.getProductName(), false, productCreationDTO.getProductDescription(), new ShopId(productCreationDTO.getShopId()), category);
 
-        int minPrice = productCreationDTO.getProductItemCreationDTOS().stream().mapToInt(ProductItemCreationDTO::getPrice).min().getAsInt();
+        double minPrice = productCreationDTO.getProductItemCreationDTOS().stream().mapToDouble(ProductItemCreationDTO::getPrice).min().getAsDouble();
         product.setPrice(minPrice, productCreationDTO.getCurrency());
 
         List<Attribute> allAttributes = attributeService.getAllAttributes();

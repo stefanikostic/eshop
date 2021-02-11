@@ -24,7 +24,7 @@ public class PaymentService {
 
     public String charge(Order order) throws StripeException {
         Map<String, Object> chargeParams = new HashMap<>();
-        chargeParams.put("amount", order.getTotalPrice().getPrice());
+        chargeParams.put("amount", (int) order.getTotalPrice().getPrice() * 100);
         chargeParams.put("currency", order.getTotalPrice().getCurrency());
         chargeParams.put("source", order.getTokenId());
 

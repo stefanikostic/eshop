@@ -14,14 +14,14 @@ public class ProductDTO<ID extends DomainObjectId> {
     private String productId;
     private String productName;
     private String productDescription;
-    private int price;
+    private double price;
     private Currency currency;
     private String imagePath;
 
     public ProductDTO(ID productId,
                       String productName,
                       String productDescription,
-                      int price,
+                      double price,
                       Currency currency,
                       String imagePath
                       ) {

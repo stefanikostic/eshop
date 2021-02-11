@@ -81,7 +81,7 @@ public class Product extends AbstractEntity<ProductId> {
         this.name = name;
     }
 
-    public void setPrice(int price, Currency currency) {
+    public void setPrice(double price, Currency currency) {
         this.price = new Price(price, currency);
     }
 
